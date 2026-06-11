@@ -16,7 +16,6 @@ export default class TodoSvc {
   }
 
   static update(task: TTodoUpdateOptions) {
-    // validate status if provided
     if (task.status && !Object.values(TodoStatus).includes(task.status)) {
       return Promise.reject(
         `Invalid status. Valid values: ${Object.values(TodoStatus).join(", ")}`

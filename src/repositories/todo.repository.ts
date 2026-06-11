@@ -48,7 +48,6 @@ export default class TodoRepo {
           title: data.title,
           description: data.description,
           status: data.status,
-          // auto-manage completedAt based on status
           completedAt:
             data.status === TodoStatus.DONE
               ? new Date()
