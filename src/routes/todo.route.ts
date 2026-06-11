@@ -1,14 +1,11 @@
 import express from "express";
-import todoRouter from "./todo.route";
+import TodoCtrl from "../controllers/todo.controller";
 
 const router = express.Router();
 
-router.get("/v1", (_, res) => {
-  res.json({
-    message: "Welcome to my API",
-  });
-});
-
-router.use("/todos", todoRouter);
+router.post("/", TodoCtrl.createTask);
+router.put("/:id", TodoCtrl.update);
+router.patch("/:id", TodoCtrl.update);
+router.delete("/:id", TodoCtrl.delete);
 
 export default router;

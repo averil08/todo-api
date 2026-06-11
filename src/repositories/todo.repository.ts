@@ -1,11 +1,9 @@
-import { prisma } from "../app";
-
-type TTodoCreate = { title: string; description: string };
-type TTodoUpdate = { _id: string; title: string; description: string; status?: string };
+import { prisma } from "../prisma";
+import { TTodo, TTodoUpdateOptions } from "../models/todo.model";
+import { TodoStatus } from "../generated/prisma";
 
 export default class TodoRepo {
-  // CREATE
-  static async createTask(data: TTodoCreate) {
+  static async createTask(data: TTodo) {
     try {
       const newTodo = await prisma.todo.create({
         data: {
@@ -15,23 +13,34 @@ export default class TodoRepo {
       });
       return newTodo;
     } catch (error) {
+      console.error("createTask error:", error);
       return Promise.reject("Failed to create task.");
     }
   }
 
-  // READ (All tasks)
   static async getAllTasks() {
     try {
       return await prisma.todo.findMany({
-        orderBy: { createdAt: 'desc' } // Sorts tasks so the newest appear first
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       return Promise.reject("Failed to retrieve tasks.");
     }
   }
 
-  // UPDATE
-  static async update(data: TTodoUpdate) {
+  static async getTaskById(_id: number) {
+    try {
+      const todo = await prisma.todo.findUnique({
+        where: { id: _id },
+      });
+      if (!todo) return Promise.reject("Task not found.");
+      return todo;
+    } catch (error) {
+      return Promise.reject("Invalid task id or task does not exist.");
+    }
+  }
+
+  static async update(data: TTodoUpdateOptions) {
     try {
       const updatedTodo = await prisma.todo.update({
         where: { id: data._id },
@@ -39,6 +48,13 @@ export default class TodoRepo {
           title: data.title,
           description: data.description,
           status: data.status,
+          // auto-manage completedAt based on status
+          completedAt:
+            data.status === TodoStatus.DONE
+              ? new Date()
+              : data.status !== undefined
+              ? null
+              : undefined,
         },
       });
       return updatedTodo;
@@ -47,13 +63,12 @@ export default class TodoRepo {
     }
   }
 
-  // DELETE
   static async delete(_id: string) {
     try {
       await prisma.todo.delete({
-        where: { id: _id },
+        where: { id: Number(_id) },
       });
-      return Promise.resolve("Successfully deleted task.");
+      return "Successfully deleted task.";
     } catch (error) {
       return Promise.reject("Invalid task id or task does not exist.");
     }

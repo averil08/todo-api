@@ -12,9 +12,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum TodoStatus {
+  NOT_STARTED
+  PENDING
+  DONE
+}
+
 model Todo {
-  id        Int      @id @default(autoincrement())
-  title     String
-  completed Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  status      TodoStatus @default(PENDING)
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
