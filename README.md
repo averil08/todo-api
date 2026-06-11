@@ -1,82 +1,187 @@
-# Restful API Template
+# Todo List API
+A RESTful backend API for managing tasks in a Todo List application.
 
-This is a Node.js TypeScript project that implements a RESTful API using Express.js, MongoDB native driver, and follows Domain-Driven Design (DDD) principles. It also utilizes `express-session`, `express-rate-limit`, and `helmet` for enhanced security.
+## Tech Stack
 
-## Project Structure
+* Node.js
+* Express.js
+* PostgreSQL
+* Prisma ORM
+* Docker
+* TypeScript
 
-The project is structured into several components that work together to handle HTTP requests and interact with the database:
+---
 
-### Models
+### Fields
 
-- The `models` directory contains TypeScript interfaces that define the structure of our domain entities. These interfaces serve as blueprints for our data.
+| Field       | Type       | Description           |
+| ----------- | ---------- | --------------------- |
+| id          | Int        | Unique identifier     |
+| title       | String     | Todo title            |
+| description | String?    | Optional description  |
+| status      | TodoStatus | Current status        |
+| completedAt | DateTime?  | Completion timestamp  |
+| createdAt   | DateTime   | Creation timestamp    |
+| updatedAt   | DateTime   | Last update timestamp |
 
-### Utils
+---
 
-- The `utils` directory contains a module called `mongo.ts` which handles the MongoDB connection and provides a function to get access to the database instance.
+## Setup
 
-### Config
+### Clone Repository
 
-- The `config.ts` file manages environment variables using the `dotenv` package. It stores values like the port number, MongoDB URI, and session secret.
+```bash
+git clone <repository-url>
+cd todo-api
+```
 
-### Repositories
+### Install Dependencies
 
-- The `repositories` directory houses functions that interact directly with the database using the MongoDB native driver. These functions handle operations such as creating and retrieving data.
+```bash
+npm install
+```
 
-- Repositories use the models defined in the `models` directory and the MongoDB connection from the `utils` module.
+### Environment Variables
 
-### Services
+Create a `.env` file:
 
-- The `services` directory contains modules that encapsulate business logic. They rely on the repositories to perform database operations.
-
-- Services handle operations that involve more complex logic than simple database interactions.
-
-### Controllers
-
-- The `controllers` directory handles HTTP requests and responses. They use the services to perform operations and return appropriate responses.
-
-- Controllers are responsible for taking data from incoming HTTP requests, passing it to the services, and returning the response back to the client.
-
-### Routes
-
-- The `routes` directory organizes route files for different resources. The `index.ts` file serves as the main router that combines all the resource-specific routes.
-
-## Configuration
-
-The application's configuration values are managed using the `dotenv` package. You can modify the environment variables in the `.env` file.
-
-### Available Configuration Variables
-
-- `PORT`: The port number the server will listen on. Default is 3000.
-
-- `MONGO_URI`: The URI for the MongoDB database. Default is `mongodb://localhost:27017/mydatabase`.
-
-- `SESSION_SECRET`: The secret key used to sign the session ID cookie. Default is `my-secret-key`.
-
-## Running the Project
-
-1. Make sure you have Node.js and npm installed.
-
-2. Create a `.env` file in the root of your project with the following content:
-
-```plaintext
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/tododb"
 PORT=3000
-MONGO_URI=mongodb://localhost:27017/mydatabase
-SESSION_SECRET=my-secret-key
 ```
-## Install project dependencies:
-```plaintext
-yarn install
+
+---
+
+## Running PostgreSQL with Docker
+
+Start PostgreSQL container:
+
+```bash
+docker compose up -d
 ```
-## Start the server in development:
-```plaintext
-yarn dev
+
+Verify container is running:
+
+```bash
+docker ps
 ```
-## Start the server:
-```plaintext
-yarn start
+
+---
+
+## Prisma Setup
+
+Run migrations:
+
+```bash
+npx prisma migrate dev
 ```
-## Testing
-We use Jest for testing. You can run the tests using the command:
-```plaintext
-yarn test
+
+Generate Prisma Client:
+
+```bash
+npx prisma generate
 ```
+
+## Running the Application
+
+Development mode:
+
+```bash
+npm run dev
+```
+
+Production mode:
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## API Endpoints test in Postman
+
+### Create Todo in Postman (POST)
+
+`/todos`
+
+Request Body:
+
+```json
+{
+  "title": "Learn Prisma",
+  "description": "Study Prisma ORM basics"
+}
+```
+
+---
+
+### Get All Todos
+
+`/todos`
+
+Response:
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Learn Prisma",
+    "status": "PENDING"
+  }
+]
+```
+
+---
+
+### Update Entire Todo (PUT)
+
+`/todos/:id`
+
+Request Body:
+
+```json
+{
+  "title": "Learn Prisma ORM",
+  "description": "Updated description",
+  "status": "DONE"
+}
+```
+
+---
+
+### Partially Update (PATCH) Todo
+
+`/todos/:id`
+
+Request Body:
+
+```json
+{
+  "status": "DONE"
+}
+```
+
+---
+
+### Delete Todo
+
+`/todos/:id`
+
+Response:
+
+```json
+{
+  "message": "Todo deleted successfully"
+}
+```
+
+---
+
+## Status Values
+
+| Status      |
+| ----------- |
+| NOT_STARTED |
+| PENDING     |
+| DONE        |
