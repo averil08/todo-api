@@ -2,13 +2,18 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { connectToMongo } from "./utils/mongo";
+import { PrismaClient } from "./generated/prisma";
+import { PrismaPg } from "@prisma/adapter-pg";
 import router from "./routes";
 import { isDev } from "./config";
 import setup from "./setup";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
+
+// 2. Instantiate and export prisma for your repositories to use
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+export const prisma = new PrismaClient({ adapter });
 
 const app = express();
 
@@ -52,14 +57,15 @@ import events from "./events";
 
 events(io);
 
-// Connect to MongoDB
-connectToMongo()
+// 3. Replaced connectToMongo with Prisma connection logic
+prisma.$connect()
   .then(() => {
+    console.log("Successfully connected to PostgreSQL via Prisma");
     // Run setup
     setup();
   })
-  .catch((err) => {
-    console.log(err);
+  .catch((err: any) => {
+    console.error("Failed to connect to the database:", err);
   });
 
 export default server;
