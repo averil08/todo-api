@@ -3,6 +3,8 @@ import TodoCtrl from "../controllers/todo.controller";
 
 const router = express.Router();
 
+router.get("/", TodoCtrl.getAll);
+router.get("/:id", TodoCtrl.getById);
 router.post("/", TodoCtrl.createTask);
 router.put("/:id", TodoCtrl.update);
 router.patch("/:id", TodoCtrl.update);

@@ -13,7 +13,12 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({ 
+  origin: "http://localhost:3001",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], 
+  allowedHeaders: ["Content-Type"],
+  credentials: true 
+}));
 app.use(express.json());
 
 const limiter = rateLimit({
