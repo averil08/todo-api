@@ -9,6 +9,7 @@ services:
     environment:
       - PORT=3000
       - DATABASE_URL=postgresql://postgres:mysecretpassword@postgres_db:5432/postgres?schema=public
+      - JWT_SECRET=your_super_secret_key_here
     depends_on:
       postgres_db:
         condition: service_healthy
