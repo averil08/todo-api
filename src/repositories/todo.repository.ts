@@ -9,6 +9,7 @@ export default class TodoRepo {
         data: {
           title: data.title,
           description: data.description,
+          userId: data.userId!,
         },
       });
       return newTodo;
@@ -18,9 +19,10 @@ export default class TodoRepo {
     }
   }
 
-  static async getAllTasks() {
+  static async getAllTasks(userId: number) {
     try {
       return await prisma.todo.findMany({
+        where: { userId },
         orderBy: { createdAt: "desc" },
       });
     } catch (error) {

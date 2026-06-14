@@ -7,8 +7,8 @@ export default class TodoSvc {
     return TodoRepo.createTask(task);
   }
 
-  static getAllTasks() {
-    return TodoRepo.getAllTasks();
+  static getAllTasks(userId: number) {
+    return TodoRepo.getAllTasks(userId);
   }
 
   static getTaskById(_id: number) {

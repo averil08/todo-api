@@ -16,7 +16,7 @@ app.set("trust proxy", 1);
 app.use(cors({ 
   origin: "http://localhost:3001",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], 
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true 
 }));
 app.use(express.json());

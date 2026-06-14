@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import TodoSvc from "../services/todo.service";
 import { TodoStatus } from "../generated/prisma";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 export default class TodoCtrl {
-  static async createTask(req: Request, res: Response) {
+  static async createTask(req: AuthRequest, res: Response) {
     const { title, description } = req.body;
 
     const schema = Joi.object({
@@ -18,16 +19,16 @@ export default class TodoCtrl {
     }
 
     try {
-      const result = await TodoSvc.createTask({ title, description });
+      const result = await TodoSvc.createTask({ title, description, userId: req.userId! });
       return res.status(201).json({ message: result });
     } catch (error) {
       return res.status(500).json({ message: error });
     }
   }
 
-  static async getAll(_req: Request, res: Response) {
+  static async getAll(req: AuthRequest, res: Response) {
     try {
-      const result = await TodoSvc.getAllTasks();
+      const result = await TodoSvc.getAllTasks(req.userId!);
       return res.json({ message: result });
     } catch (error) {
       return res.status(500).json({ message: error });
